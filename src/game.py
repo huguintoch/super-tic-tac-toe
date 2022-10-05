@@ -18,12 +18,12 @@ class Tile(pygame.sprite.Sprite):
         self.rect.x = sideLength * (tileIndex % 3) + boardPos.x
         self.rect.y = sideLength * (int)(tileIndex / 3) + boardPos.y
 
-    def switchState(self, newState):
+    def switchState(self, newState) -> bool:
         if self.state != 0:
-            return
+            return False
         self.state = newState
         self.image.fill(TILE_COLORS[self.state])
-        print(self.rect)
+        return True
 
     def render(self, board: pygame.Surface):
         board.blit(self.image, self.rect)
@@ -63,6 +63,9 @@ class Board(pygame.sprite.Sprite):
         for tile in self.tiles:
             tile.render(screen)
         self.renderLines(screen)
+    
+    def checkWin(self) -> bool:
+        winStatus = False
 
 
 class SuperBoard:
@@ -75,3 +78,8 @@ class SuperBoard:
     def render(self, screen: pygame.Surface):
         for board in self.boards:
             board.render(screen)
+
+class Player:
+    def __init__(self, color: int, isAI: bool = False):
+        self.isAi = isAI
+        self.color = color
