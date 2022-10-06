@@ -33,17 +33,17 @@ def main():
                 for tile in board.tiles:
                     if tile.rect.collidepoint(event.pos):
                         if tile.switchState(players[activePlayer].color):
+                            if board.checkWin():
+                                print("Board: " + str(board.boardIndex) + " won by " + str(activePlayer))
+                                board.winBoard(players[activePlayer].color);
                             activePlayer = (activePlayer + 1) % 2
         
         superBoard.render(screen)
         
-        pygame.draw.line(screen, (0, 0, 0), (0, HEIGHT/3),
-                         (WIDTH, HEIGHT/3), 3)
-        pygame.draw.line(screen, (0, 0, 0), (0, HEIGHT*2/3),
-                         (WIDTH, HEIGHT*2/3), 3)
+        pygame.draw.line(screen, (0, 0, 0), (0, HEIGHT/3), (WIDTH, HEIGHT/3), 3)
+        pygame.draw.line(screen, (0, 0, 0), (0, HEIGHT*2/3), (WIDTH, HEIGHT*2/3), 3)
         pygame.draw.line(screen, (0, 0, 0), (WIDTH/3, 0), (WIDTH/3, HEIGHT), 3)
-        pygame.draw.line(screen, (0, 0, 0), (WIDTH*2/3, 0),
-                         (WIDTH*2/3, HEIGHT), 3)
+        pygame.draw.line(screen, (0, 0, 0), (WIDTH*2/3, 0), (WIDTH*2/3, HEIGHT), 3)
         pygame.display.update()
 
 
