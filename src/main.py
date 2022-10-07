@@ -10,6 +10,30 @@ FPS = 15
 VECTOR2 = pygame.math.Vector2  # 2 for two dimensional
 BACKGROUND_COLOR = (255, 255, 255)
 
+def processTile(superBoard, board, tile, players):
+    global activePlayer
+    if tile.switchState(players[activePlayer].color):
+        print(tile)
+        if board.checkWin():
+            print("Board: " + str(board.boardIndex) + " won by " + str(players[activePlayer].color))
+            board.winBoard(players[activePlayer].color)
+            if superBoard.checkWin():
+                print("Game won by Player " + str(players[activePlayer].color))
+                sys.exit()
+        if board.isFull() and not board.isWon:
+            board.reset()
+        
+        for board2 in superBoard.boards:
+            if board2.boardIndex == tile.tileIndex:
+                board2.active = True
+                if board2.isWon:
+                    for board3 in superBoard.boards:
+                        board3.active=True
+                    break
+            else:
+                board2.active = False
+
+        activePlayer = (activePlayer + 1) % 2
 
 def main():
     pygame.init()
@@ -23,6 +47,7 @@ def main():
 
     superBoard = SuperBoard(HEIGHT)
     players = [Player(1), Player(2)]
+    global activePlayer
     activePlayer = 0
     while True:
         events = pygame.event.get()
@@ -34,29 +59,8 @@ def main():
                 if board.active:
                     for tile in board.tiles:
                         if tile.rect.collidepoint(event.pos):
-                            isValidClick = tile.switchState(players[activePlayer].color)
-                            if isValidClick:
-                                print(tile)
-                                if board.checkWin():
-                                    print("Board: " + str(board.boardIndex) + " won by " + str(player[activePlayer].color))
-                                    board.winBoard(players[activePlayer].color)
-                                    if superBoard.checkWin():
-                                        print("Game won by Player " + str(players[activePlayer].color))
-                                        sys.exit()
-                                if board.isFull() and not board.isWon:
-                                    board.reset()
-                                
-                                for board2 in superBoard.boards:
-                                    if board2.boardIndex == tile.tileIndex:
-                                        board2.active = True
-                                        if board2.isWon:
-                                            for board3 in superBoard.boards:
-                                                board3.active=True
-                                            break
-                                    else:
-                                        board2.active = False
-
-                                activePlayer = (activePlayer + 1) % 2
+                            processTile(superBoard, board, tile, players)
+                            
         superBoard.render(screen)
         
         pygame.draw.line(screen, (0, 0, 0), (0, HEIGHT/3), (WIDTH, HEIGHT/3), 3)
