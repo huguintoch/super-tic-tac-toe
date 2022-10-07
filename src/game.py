@@ -26,11 +26,16 @@ class Tile(pygame.sprite.Sprite):
         self.image.fill(TILE_COLORS[self.state])
         return True
     
+    def reset(self):
+        self.state = 0
+        self.image.fill(TILE_COLORS[self.state])
+
     def winState(self, winState):
         self.state = winState
         self.image.fill(TILE_COLORS[self.state])
 
     def render(self, board: pygame.Surface):
+        self.image.fill(TILE_COLORS[self.state])
         board.blit(self.image, self.rect)
 
 
@@ -40,6 +45,11 @@ class Board(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface([sideLength, sideLength])
         self.image.fill((255/9, 255, 255))
+
+        self.blocker = pygame.Surface([sideLength, sideLength], pygame.SRCALPHA, 32)
+        self.blocker = self.blocker.convert_alpha()
+        self.blocker.fill(color = (0, 0, 0, 100))
+
         self.boardIndex = boardIndex
         self.rect = self.image.get_rect()
         self.rect.x = sideLength * (boardIndex % 3)
@@ -48,6 +58,8 @@ class Board(pygame.sprite.Sprite):
                       Tile(sideLength/3, 3, self.rect), Tile(sideLength/3,
                                                              4, self.rect), Tile(sideLength/3, 5, self.rect),
                       Tile(sideLength/3, 6, self.rect), Tile(sideLength/3, 7, self.rect), Tile(sideLength/3, 8, self.rect)]
+        self.active = True
+        self.isWon = False
 
     def renderLines(self, screen: pygame.Surface):
 
@@ -69,6 +81,8 @@ class Board(pygame.sprite.Sprite):
         for tile in self.tiles:
             tile.render(screen)
         self.renderLines(screen)
+        if not self.active:
+            screen.blit(self.blocker, self.rect)
     
     def checkWin(self) -> bool:
         firstRow    = self.tiles[0].state == self.tiles[1].state and self.tiles[1].state == self.tiles[2].state and self.tiles[0].state != 0
@@ -87,8 +101,17 @@ class Board(pygame.sprite.Sprite):
     def winBoard(self, winningPlayer):
         for tile in self.tiles:
             tile.winState(winningPlayer)
-
-
+        self.isWon = True
+    
+    def isFull(self):
+        for tile in self.tiles:
+            if tile.state == 0:
+                return False
+        return True
+    
+    def reset(self):
+        for tile in self.tiles:
+            tile.reset()
 
 class SuperBoard:
     def __init__(self, sideLength):

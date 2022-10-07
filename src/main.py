@@ -25,19 +25,35 @@ def main():
     players = [Player(1), Player(2)]
     activePlayer = 0
     while True:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not players[activePlayer].isAi:
             for board in superBoard.boards:
-                for tile in board.tiles:
-                    if tile.rect.collidepoint(event.pos):
-                        if tile.switchState(players[activePlayer].color):
-                            if board.checkWin():
-                                print("Board: " + str(board.boardIndex) + " won by " + str(activePlayer))
-                                board.winBoard(players[activePlayer].color);
-                            activePlayer = (activePlayer + 1) % 2
-        
+                if board.active:
+                    for tile in board.tiles:
+                        if tile.rect.collidepoint(event.pos):
+                            isValidClick = tile.switchState(players[activePlayer].color)
+                            if isValidClick:
+                                print(tile)
+                                if board.checkWin():
+                                    print("Board: " + str(board.boardIndex) + " won by " + str(activePlayer))
+                                    board.winBoard(players[activePlayer].color)
+                                if board.isFull() and not board.isWon:
+                                    board.reset()
+                                
+                                for board2 in superBoard.boards:
+                                    if board2.boardIndex == tile.tileIndex:
+                                        board2.active = True
+                                        if board2.isWon:
+                                            for board3 in superBoard.boards:
+                                                board3.active=True
+                                            break
+                                    else:
+                                        board2.active = False
+
+                                activePlayer = (activePlayer + 1) % 2
         superBoard.render(screen)
         
         pygame.draw.line(screen, (0, 0, 0), (0, HEIGHT/3), (WIDTH, HEIGHT/3), 3)
@@ -45,6 +61,8 @@ def main():
         pygame.draw.line(screen, (0, 0, 0), (WIDTH/3, 0), (WIDTH/3, HEIGHT), 3)
         pygame.draw.line(screen, (0, 0, 0), (WIDTH*2/3, 0), (WIDTH*2/3, HEIGHT), 3)
         pygame.display.update()
+        pygame.display.flip()
+        clock.tick(FPS)
 
 
 if __name__ == '__main__':
