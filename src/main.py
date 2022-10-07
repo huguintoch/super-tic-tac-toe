@@ -38,8 +38,11 @@ def main():
                             if isValidClick:
                                 print(tile)
                                 if board.checkWin():
-                                    print("Board: " + str(board.boardIndex) + " won by " + str(activePlayer))
+                                    print("Board: " + str(board.boardIndex) + " won by " + str(player[activePlayer].color))
                                     board.winBoard(players[activePlayer].color)
+                                    if superBoard.checkWin():
+                                        print("Game won by Player " + str(players[activePlayer].color))
+                                        sys.exit()
                                 if board.isFull() and not board.isWon:
                                     board.reset()
                                 

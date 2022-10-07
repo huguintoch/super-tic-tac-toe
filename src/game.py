@@ -60,6 +60,7 @@ class Board(pygame.sprite.Sprite):
                       Tile(sideLength/3, 6, self.rect), Tile(sideLength/3, 7, self.rect), Tile(sideLength/3, 8, self.rect)]
         self.active = True
         self.isWon = False
+        self.state = 0
 
     def renderLines(self, screen: pygame.Surface):
 
@@ -102,6 +103,7 @@ class Board(pygame.sprite.Sprite):
         for tile in self.tiles:
             tile.winState(winningPlayer)
         self.isWon = True
+        self.state = winningPlayer
     
     def isFull(self):
         for tile in self.tiles:
@@ -123,6 +125,20 @@ class SuperBoard:
     def render(self, screen: pygame.Surface):
         for board in self.boards:
             board.render(screen)
+
+    def checkWin(self):
+        firstRow    = self.boards[0].isWon == self.boards[1].state and self.boards[1].state == self.boards[2].state and self.boards[0].state != 0
+        secondRow   = self.boards[3].state == self.boards[4].state and self.boards[4].state == self.boards[5].state and self.boards[3].state != 0
+        thirdRow    = self.boards[6].state == self.boards[7].state and self.boards[7].state == self.boards[8].state and self.boards[6].state != 0
+
+        firstColumn     = self.boards[0].state == self.boards[3].state and self.boards[3].state == self.boards[6].state and self.boards[0].state != 0
+        secondColumn    = self.boards[1].state == self.boards[4].state and self.boards[4].state == self.boards[7].state and self.boards[1].state != 0
+        thirdColumn     = self.boards[2].state == self.boards[5].state and self.boards[5].state == self.boards[8].state and self.boards[2].state != 0
+
+        firstDiag       = self.boards[0].state == self.boards[4].state and self.boards[4].state == self.boards[8].state and self.boards[0].state != 0
+        secondDiag      = self.boards[2].state == self.boards[4].state and self.boards[4].state == self.boards[6].state and self.boards[2].state != 0
+
+        return firstRow | firstColumn | firstDiag | secondRow | secondColumn | secondDiag | thirdRow | thirdColumn
 
 class Player:
     def __init__(self, color: int, isAI: bool = False):
