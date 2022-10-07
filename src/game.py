@@ -58,7 +58,7 @@ class Board(pygame.sprite.Sprite):
                       Tile(sideLength/3, 3, self.rect), Tile(sideLength/3,
                                                              4, self.rect), Tile(sideLength/3, 5, self.rect),
                       Tile(sideLength/3, 6, self.rect), Tile(sideLength/3, 7, self.rect), Tile(sideLength/3, 8, self.rect)]
-        self.active = True
+        self.isActive = True
         self.isWon = False
         self.state = 0
 
@@ -82,7 +82,7 @@ class Board(pygame.sprite.Sprite):
         for tile in self.tiles:
             tile.render(screen)
         self.renderLines(screen)
-        if not self.active:
+        if not self.isActive:
             screen.blit(self.blocker, self.rect)
     
     def checkWin(self) -> bool:
@@ -122,6 +122,22 @@ class SuperBoard:
                                                      3, 4), Board(sideLength/3, 5),
                        Board(sideLength/3, 6), Board(sideLength/3, 7), Board(sideLength/3, 8)]
 
+    def getState(self) -> dict:
+        state = {
+            "tiles" : [],
+            "ActiveBoards": []
+        }
+
+        for board in self.boards:
+            if board.isActive:
+                state["ActiveBoards"].append(board.boardIndex)
+            state["tiles"].append([])
+            for tile in board.tiles:
+                state["tiles"][board.boardIndex].append(tile.state)
+        
+        return state
+                
+
     def render(self, screen: pygame.Surface):
         for board in self.boards:
             board.render(screen)
@@ -141,6 +157,6 @@ class SuperBoard:
         return firstRow | firstColumn | firstDiag | secondRow | secondColumn | secondDiag | thirdRow | thirdColumn
 
 class Player:
-    def __init__(self, color: int, isAI: bool = False):
-        self.isAi = isAI
+    def __init__(self, color: int):
+        self.isAi = False
         self.color = color

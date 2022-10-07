@@ -1,3 +1,4 @@
+from multiprocessing import Event
 import sys
 import pygame
 from game import SuperBoard, Player
@@ -10,30 +11,36 @@ FPS = 15
 VECTOR2 = pygame.math.Vector2  # 2 for two dimensional
 BACKGROUND_COLOR = (255, 255, 255)
 
-def processTile(superBoard, board, tile, players):
+#PYGAME USER EVENTS
+AIACTION = pygame.USEREVENT+1
+
+def processTile(superBoard, board, tile, playerColor):
     global activePlayer
-    if tile.switchState(players[activePlayer].color):
+    if tile.switchState(playerColor):
         print(tile)
         if board.checkWin():
-            print("Board: " + str(board.boardIndex) + " won by " + str(players[activePlayer].color))
-            board.winBoard(players[activePlayer].color)
+            print("Board: " + str(board.boardIndex) + " won by " + str(playerColor))
+            board.winBoard(playerColor)
             if superBoard.checkWin():
-                print("Game won by Player " + str(players[activePlayer].color))
+                print("Game won by Player " + str(playerColor))
                 sys.exit()
         if board.isFull() and not board.isWon:
             board.reset()
         
         for board2 in superBoard.boards:
             if board2.boardIndex == tile.tileIndex:
-                board2.active = True
+                board2.isActive = True
                 if board2.isWon:
                     for board3 in superBoard.boards:
-                        board3.active=True
+                        board3.isActive = True
                     break
             else:
-                board2.active = False
+                board2.isActive = False
 
         activePlayer = (activePlayer + 1) % 2
+        #return True
+
+    else: return False
 
 def main():
     pygame.init()
@@ -50,19 +57,26 @@ def main():
     global activePlayer
     activePlayer = 0
     while True:
+        if players[activePlayer].isAi:
+            pygame.event.post(Event(AIACTION))
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
                 sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not players[activePlayer].isAi:
             for board in superBoard.boards:
-                if board.active:
+                if board.isActive:
                     for tile in board.tiles:
                         if tile.rect.collidepoint(event.pos):
-                            processTile(superBoard, board, tile, players)
+                            processTile(superBoard, board, tile, players[activePlayer].color)
+            print(superBoard.getState())
+        if event.type == AIACTION:
+            #TODO: newAction = players[activePlayer].getNextAIAction()
+            # processTile(superBoard, superBoard.boards[newAction[0]], superBoard.boards[newAction[0]].tiles[newAction[1]], players[activePlayer].color)
+            pass
                             
         superBoard.render(screen)
-        
+
         pygame.draw.line(screen, (0, 0, 0), (0, HEIGHT/3), (WIDTH, HEIGHT/3), 3)
         pygame.draw.line(screen, (0, 0, 0), (0, HEIGHT*2/3), (WIDTH, HEIGHT*2/3), 3)
         pygame.draw.line(screen, (0, 0, 0), (WIDTH/3, 0), (WIDTH/3, HEIGHT), 3)
