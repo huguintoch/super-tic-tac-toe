@@ -1,4 +1,3 @@
-from multiprocessing import Event
 import sys
 import pygame
 from game import SuperBoard, Player
@@ -19,7 +18,6 @@ AIACTION = pygame.USEREVENT+1
 def processTile(superBoard, board, tile, playerColor):
     global activePlayer
     if tile.switchState(playerColor):
-        print(tile)
         if board.checkWin():
             print("Board: " + str(board.boardIndex) + " won by " + str(playerColor))
             board.winBoard(playerColor)
@@ -62,7 +60,7 @@ def main():
     activePlayer = 0
     while True:
         if players[activePlayer].isAi:
-            pygame.event.post(Event(AIACTION))
+            pygame.event.post(pygame.event.Event(AIACTION, {"player":activePlayer}))
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -72,12 +70,12 @@ def main():
                 if board.isActive:
                     for tileIndex, tile in enumerate(board.tiles):
                         if tile.rect.collidepoint(event.pos):
-                            processTile(superBoard, board, tile, players[activePlayer].color)
                             superBoardController.play_move(move = (boardIndex, tileIndex))
+                            processTile(superBoard, board, tile, players[activePlayer].color)
         if event.type == AIACTION:
             newAction = superBoardController.get_move()
-            processTile(superBoard, superBoard.boards[newAction[0]], superBoard.boards[newAction[0]].tiles[newAction[1]], players[activePlayer].color)
             superBoardController.play_move(move = newAction)
+            processTile(superBoard, superBoard.boards[newAction[0]], superBoard.boards[newAction[0]].tiles[newAction[1]], players[activePlayer].color)
             pass
                             
         superBoard.render(screen)
