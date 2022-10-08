@@ -38,9 +38,6 @@ def processTile(superBoard, board, tile, playerColor):
                 board2.isActive = False
 
         activePlayer = (activePlayer + 1) % 2
-        #return True
-
-    else: return False
 
 def main():
     pygame.init()
@@ -60,7 +57,7 @@ def main():
     activePlayer = 0
     while True:
         if players[activePlayer].isAi:
-            pygame.event.post(pygame.event.Event(AIACTION, {"player":activePlayer}))
+            pygame.event.post(pygame.event.Event(AIACTION))
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -72,11 +69,10 @@ def main():
                         if tile.rect.collidepoint(event.pos):
                             superBoardController.play_move(move = (boardIndex, tileIndex))
                             processTile(superBoard, board, tile, players[activePlayer].color)
-        if event.type == AIACTION:
+        if event.type == AIACTION and players[activePlayer].isAi:
             newAction = superBoardController.get_move()
             superBoardController.play_move(move = newAction)
             processTile(superBoard, superBoard.boards[newAction[0]], superBoard.boards[newAction[0]].tiles[newAction[1]], players[activePlayer].color)
-            pass
                             
         superBoard.render(screen)
 
