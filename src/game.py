@@ -143,7 +143,7 @@ class SuperBoard:
             board.render(screen)
 
     def checkWin(self):
-        firstRow    = self.boards[0].isWon == self.boards[1].state and self.boards[1].state == self.boards[2].state and self.boards[0].state != 0
+        firstRow    = self.boards[0].state == self.boards[1].state and self.boards[1].state == self.boards[2].state and self.boards[0].state != 0
         secondRow   = self.boards[3].state == self.boards[4].state and self.boards[4].state == self.boards[5].state and self.boards[3].state != 0
         thirdRow    = self.boards[6].state == self.boards[7].state and self.boards[7].state == self.boards[8].state and self.boards[6].state != 0
 
