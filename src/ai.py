@@ -6,10 +6,11 @@ class SuperTicTacToeGameController(TwoPlayerGame):
     self.current_player = 1 
     self.active_boards = [0, 1, 2, 3, 4, 5, 6, 7, 8]
     self.won_boards = [0] * 9
-    self.super_board = [[0] * 9] * 9
+    self.super_board = [[0]*9 for _ in range(9)]
   
   def show(self):
-    print('\n'+'\n'.join([' '.join([['.', 'O', 'X'][self.super_board[3*j + i]] for i in range(3)]) for j in range(3)]))
+    for k in range(9):
+        print('\n'+'\n'.join([' '.join([['.', 'O', 'X'][self.super_board[k][3*j + i]] for i in range(3)]) for j in range(3)]))
 
   def possible_moves(self):
     return [move for moves in [[(i, a) for a, b in enumerate(self.super_board[i]) if b == 0] for i in self.active_boards] for move in moves]
@@ -44,7 +45,21 @@ algorithm = Negamax(8)
 
 # Start the game
 game = SuperTicTacToeGameController([AI_Player(algorithm), Human_Player()])
-game.play()    
+
+while not game.is_over():
+  possible_moves = game.possible_moves()
+  print("Possible moves: ", possible_moves)
+  move = game.get_move()
+  print("Move: ", move)
+  game.play_move(move)
+  game.show()
+  
+  possible_moves = game.possible_moves()
+  print("Possible moves: ", possible_moves)
+  move = game.get_move()
+  print("Move: ", move)
+  game.play_move(move)
+  game.show()
     
 if game.loss_condition():
     print('\nPlayer', game.opponent_index, 'wins.')
