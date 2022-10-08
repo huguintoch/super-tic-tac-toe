@@ -40,18 +40,22 @@ def main():
     pygame.init()
 
     clock = pygame.time.Clock()
-
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     screen.fill((0, 0, 0))
     pygame.display.flip()
     pygame.display.set_caption("SuperTicTacToe")
-
     superBoard = SuperBoard(HEIGHT)
     players = [Player(1, True), Player(2, True)]
-    ai_players = [AI_Player(Negamax(4)), AI_Player(Negamax(5))]
+
+    # AI Game Controller Setup
+    scoring_1 = lambda game: game.boardsWon(2) * -100
+    scoring_2 = lambda game: game.boardsWon(1) * 0
+    ai_players = [AI_Player(Negamax(4, scoring=scoring_1)), AI_Player(Negamax(5, scoring=scoring_2))]
     superBoardController = SuperTicTacToeGameController(ai_players)
+
     global activePlayer
     activePlayer = 0
+
     while True:
         if players[activePlayer].isAi:
             pygame.event.post(pygame.event.Event(AIACTION))

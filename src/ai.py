@@ -33,3 +33,6 @@ class SuperTicTacToeGameController(TwoPlayerGame):
       
   def scoring(self):
     return -100 if self.loss_condition() else 0
+
+  def boardsWon(self, player):
+    return sum([(board == player) for board in self.won_boards])
