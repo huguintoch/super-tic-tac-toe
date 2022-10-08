@@ -19,13 +19,15 @@ class SuperTicTacToeGameController(TwoPlayerGame):
     self.super_board[move[0]][move[1]] = self.current_player
     if self.is_won(move[0]):
       self.won_boards[move[0]] = self.current_player
-      self.active_boards = [board for board in self.won_boards if board == 0]
+      self.active_boards = [index for index, board in enumerate(self.won_boards) if board == 0]
+    elif self.is_won(move[1]):
+      self.active_boards = [index for index, board in enumerate(self.won_boards) if board == 0]
     else:
       self.active_boards = [move[1]]
 
   def is_won(self, board):
     possible_combinations = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
-    return any([all([(self.super_board[board][i] == self.current_player) for i in combination]) for combination in possible_combinations]) 
+    return any([all([(self.super_board[board][i] == 1) for i in combination]) or all([(self.super_board[board][i] == 2) for i in combination]) for combination in possible_combinations]) 
     
   def loss_condition(self):
     possible_combinations = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
@@ -41,7 +43,7 @@ class SuperTicTacToeGameController(TwoPlayerGame):
 #   Program
 #------------------------------------------------------------------------------------------------------------------
 # Search algorithm of the AI player
-algorithm = Negamax(8)
+algorithm = Negamax(4)
 
 # Start the game
 game = SuperTicTacToeGameController([AI_Player(algorithm), Human_Player()])
