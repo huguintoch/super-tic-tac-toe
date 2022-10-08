@@ -16,8 +16,16 @@ class SuperTicTacToeGameController(TwoPlayerGame):
   
   def make_move(self, move):
     self.super_board[move[0]][move[1]] = self.current_player
-    self.current_board = int(move[1])
-  
+    if self.is_won(move[0]):
+      self.won_boards[move[0]] = self.current_player
+      self.active_boards = [board for board in self.won_boards if board == 0]
+    else:
+      self.active_boards = [move[1]]
+
+  def is_won(self, board):
+    possible_combinations = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
+    return any([all([(self.super_board[board][i] == self.current_player) for i in combination]) for combination in possible_combinations]) 
+    
   def loss_condition(self):
     possible_combinations = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
     return any([all([(self.won_boards[i] == self.opponent_index) for i in combination]) for combination in possible_combinations]) 
