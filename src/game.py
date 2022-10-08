@@ -157,6 +157,6 @@ class SuperBoard:
         return firstRow | firstColumn | firstDiag | secondRow | secondColumn | secondDiag | thirdRow | thirdColumn
 
 class Player:
-    def __init__(self, color: int):
-        self.isAi = False
+    def __init__(self, color: int, isAi: bool):
+        self.isAi = isAi
         self.color = color

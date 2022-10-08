@@ -43,27 +43,27 @@ class SuperTicTacToeGameController(TwoPlayerGame):
 #   Program
 #------------------------------------------------------------------------------------------------------------------
 # Search algorithm of the AI player
-algorithm = Negamax(4)
+# algorithm = Negamax(4)
 
-# Start the game
-game = SuperTicTacToeGameController([AI_Player(algorithm), Human_Player()])
+# # Start the game
+# game = SuperTicTacToeGameController([AI_Player(algorithm), Human_Player()])
 
-while not game.is_over():
-  possible_moves = game.possible_moves()
-  print("Possible moves: ", possible_moves)
-  move = game.get_move()
-  print("Move: ", move)
-  game.play_move(move)
-  game.show()
+# while not game.is_over():
+#   possible_moves = game.possible_moves()
+#   print("Possible moves: ", possible_moves)
+#   move = game.get_move()
+#   print("Move: ", move)
+#   game.play_move(move)
+#   game.show()
   
-  possible_moves = game.possible_moves()
-  print("Possible moves: ", possible_moves)
-  move = game.get_move()
-  print("Move: ", move)
-  game.play_move(move)
-  game.show()
+#   possible_moves = game.possible_moves()
+#   print("Possible moves: ", possible_moves)
+#   move = game.get_move()
+#   print("Move: ", move)
+#   game.play_move(move)
+#   game.show()
     
-if game.loss_condition():
-    print('\nPlayer', game.opponent_index, 'wins.')
-else:
-    print("\nIt's a draw.")
+# if game.loss_condition():
+#     print('\nPlayer', game.opponent_index, 'wins.')
+# else:
+#     print("\nIt's a draw.")

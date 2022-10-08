@@ -2,6 +2,8 @@ from multiprocessing import Event
 import sys
 import pygame
 from game import SuperBoard, Player
+from ai import SuperTicTacToeGameController
+from easyAI import Human_Player, AI_Player, Negamax
 from pygame.locals import *
 
 #Global Variables
@@ -53,7 +55,9 @@ def main():
     pygame.display.set_caption("SuperTicTacToe")
 
     superBoard = SuperBoard(HEIGHT)
-    players = [Player(1), Player(2)]
+    players = [Player(1, True), Player(2, False)]
+    ai_players = [AI_Player(Negamax(4)), Human_Player()]
+    superBoardController = SuperTicTacToeGameController(ai_players)
     global activePlayer
     activePlayer = 0
     while True:
@@ -64,15 +68,16 @@ def main():
             if event.type == pygame.QUIT:
                 sys.exit()
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not players[activePlayer].isAi:
-            for board in superBoard.boards:
+            for boardIndex, board in enumerate(superBoard.boards):
                 if board.isActive:
-                    for tile in board.tiles:
+                    for tileIndex, tile in enumerate(board.tiles):
                         if tile.rect.collidepoint(event.pos):
                             processTile(superBoard, board, tile, players[activePlayer].color)
-            print(superBoard.getState())
+                            superBoardController.play_move(move = (boardIndex, tileIndex))
         if event.type == AIACTION:
-            #TODO: newAction = players[activePlayer].getNextAIAction()
-            # processTile(superBoard, superBoard.boards[newAction[0]], superBoard.boards[newAction[0]].tiles[newAction[1]], players[activePlayer].color)
+            newAction = superBoardController.get_move()
+            processTile(superBoard, superBoard.boards[newAction[0]], superBoard.boards[newAction[0]].tiles[newAction[1]], players[activePlayer].color)
+            superBoardController.play_move(move = newAction)
             pass
                             
         superBoard.render(screen)
