@@ -2,7 +2,7 @@ import sys
 import pygame
 from game import SuperBoard, Player
 from ai import SuperTicTacToeGameController
-from easyAI import Human_Player, AI_Player, Negamax
+from easyAI import Human_Player, AI_Player, Negamax, SSS
 from pygame.locals import *
 
 #Global Variables
@@ -40,18 +40,22 @@ def main():
     pygame.init()
 
     clock = pygame.time.Clock()
-
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     screen.fill((0, 0, 0))
     pygame.display.flip()
     pygame.display.set_caption("SuperTicTacToe")
-
     superBoard = SuperBoard(HEIGHT)
+
+    # AI Game Controller Setup
     players = [Player(1, True), Player(2, True)]
-    ai_players = [AI_Player(Negamax(4)), AI_Player(Negamax(5))]
+    scoring_1 = lambda game: game.boardsWon(2) * -100
+    scoring_2 = lambda game: game.boardsWon(1) * -100
+    ai_players = [AI_Player(Negamax(4, scoring=scoring_2)), AI_Player(SSS(4, scoring=scoring_1))]
     superBoardController = SuperTicTacToeGameController(ai_players)
+
     global activePlayer
     activePlayer = 0
+
     while True:
         if players[activePlayer].isAi:
             pygame.event.post(pygame.event.Event(AIACTION))
