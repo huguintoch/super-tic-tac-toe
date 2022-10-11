@@ -50,7 +50,7 @@ def main():
     players = [Player(1, True), Player(2, True)]
     scoring_1 = lambda game: game.boardsWon(2) * -100
     scoring_2 = lambda game: game.boardsWon(1) * -100
-    ai_players = [AI_Player(Negamax(5, scoring=scoring_2)), AI_Player(SSS(5, scoring=scoring_1))]
+    ai_players = [AI_Player(Negamax(4, scoring=scoring_2)), AI_Player(SSS(4, scoring=scoring_1))]
     superBoardController = SuperTicTacToeGameController(ai_players)
 
     global activePlayer
