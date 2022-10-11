@@ -47,10 +47,10 @@ def main():
     superBoard = SuperBoard(HEIGHT)
 
     # AI Game Controller Setup
-    scoring_1 = lambda game: game.boardsWon(2) * -10
-    scoring_2 = lambda game: game.boardsWon(1) * -10
     players = [Player(1, True), Player(2, True)]
-    ai_players = [AI_Player(Negamax(5, scoring=scoring_1)), AI_Player(Negamax(5, scoring=scoring_2))]
+    scoring_1 = lambda game: game.boardsWon(2) * -100
+    scoring_2 = lambda game: game.boardsWon(1) * -100
+    ai_players = [AI_Player(Negamax(5, scoring=scoring_2)), AI_Player(SSS(5, scoring=scoring_1))]
     superBoardController = SuperTicTacToeGameController(ai_players)
 
     global activePlayer
